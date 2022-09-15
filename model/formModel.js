@@ -13,7 +13,7 @@ const formSchema = new mongoose.Schema({
     userName: { type: String, required: true},
     role: {type : String, required: true},
     isVerified: { type: Boolean, required: true },
-});
+},{timestamps:true});
 
 const form =  mongoose.model("form",formSchema);
 

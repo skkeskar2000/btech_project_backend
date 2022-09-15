@@ -7,8 +7,6 @@ router.post("/register",async(req,res)=>{
         
         const {email, password, name, role} = req.body;
 
-        // console.log(req.body);
-
         if(!email || !password || !name || !role){
             return res.status(400).json({errorMessage : "Plese enter all required field"});
         }

@@ -7,6 +7,7 @@ router.post("/saveform", async (req, res) => {
 
     try {
 
+        console.log(req.body);
         const { jobKnowledge, problemSolvingAbility, productivity, communicationSkill, leadership, creativity, achievements, projects, userId, userName,role, isVerified, } = req.body;
 
         // if (!jobKnowledge || !problemSolvingAbility || !productivity || !communicationSkill || !leadership || !creativity || !achievements || !projects || !userId || !userName || !isVerified) {
@@ -29,6 +30,7 @@ router.post("/saveform", async (req, res) => {
         });
 
         const savedForm = await newForm.save();
+        
         res.status(200).json({ message: "Saved Form" });
 
 
@@ -42,18 +44,33 @@ router.post("/saveform", async (req, res) => {
 router.get('/getform',async(req,res)=>{
     try {
         userId = req.query.userId;
+        let isDisplay = req.query.isDisplay;
         // role = req.query.role;
 
         if(!userId){
             return res.status(401).send({message : 'Please Send proper data'});
         }
         
-        const getForm = await form.findOne({ userId: userId});
+        const getForm = await form.find({ userId: userId});
+        
+        if(isDisplay === "true")  return res.status(200).send(getForm);
+
         if(getForm==null){
             return res.status(400).send({message : "Form Is not Filled "})
         }
 
-        return res.status(200).send(getForm);
+        var year = new Date(getForm[getForm.length - 1].createdAt);
+        var finalYear = year.getFullYear();
+        
+        var mainYear = new Date();
+        
+        
+        mainYear = mainYear.getFullYear();
+        console.log(year," ",finalYear, " ",mainYear);
+
+        if(finalYear == mainYear ) res.status(400).send({message: "Form is Filled"});
+        else if (finalYear == mainYear - 1) res.status(400).send({message:"You can fill form now"});
+
     } catch (error) {
         console.log(error);
     }

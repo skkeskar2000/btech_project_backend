@@ -23,3 +23,4 @@ mongoose.connect(process.env.DB_URL).then(()=>{
 
 app.use('/auth',require("./routers/userRoute"));
 app.use('/form',require("./routers/formRoute"));
+app.use('/admin',require("./routers/createFormRoute"));

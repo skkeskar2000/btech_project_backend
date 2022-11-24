@@ -54,11 +54,11 @@ router.get("/login",async(req,res)=>{
         const findUser = await user.findOne({email : email});
         // console.log(findUser);
         if(!findUser){
-            return res.status(400).json({message : "Wrong password or email"});
+            return res.status(400).json({msg : "Wrong password or email"});
         }
 
         if(findUser.password !== password){
-            return res.status(400).json({message : "Wrong password or email"});
+            return res.status(400).json({msg : "Wrong password or email"});
         }
 
         if(findUser.password === password){
@@ -76,16 +76,16 @@ router.get("/selecteduser",async(req,res)=>{
         var role = req.query.role;
 
         if(!role){
-            return res.status(400).json({messsage : "Please Enter all fileds"});
+            return res.status(200).json({status:false,msg : "Please Enter all fileds"});
         }
 
         const findUsers = await user.find({role : role});
 
         if(!findUsers){
-            return res.status(400).json({message: "There is no user"});
+            return res.status(200).json({status:false,msg: "There is no user"});
         }
 
-        return res.status(200).send(findUsers)
+        return res.status(200).send({status: true,data:findUsers})
     } catch (error) {
         console.log(error);
     }

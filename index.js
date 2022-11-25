@@ -21,7 +21,9 @@ mongoose.connect(process.env.DB_URL).then(()=>{
     console.log("Database Connected");
 }).catch((error)=>console.log(error));
 
-
+app.get('/',async(req,res)=>{
+    res.status(200).send('Server Started');
+});
 app.use('/auth',require("./routers/userRoute"));
 app.use('/form',require("./routers/formRoute"));
 app.use('/admin',require("./routers/createFormRoute"));

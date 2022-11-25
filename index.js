@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const functions = require("firebase-functions");
 
 
 dotenv.config();
@@ -24,3 +25,5 @@ mongoose.connect(process.env.DB_URL).then(()=>{
 app.use('/auth',require("./routers/userRoute"));
 app.use('/form',require("./routers/formRoute"));
 app.use('/admin',require("./routers/createFormRoute"));
+
+exports.api = functions.https.onRequest(app);

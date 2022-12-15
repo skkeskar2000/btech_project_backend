@@ -1,7 +1,9 @@
-const { response } = require("express");
+const { response, json } = require("express");
 const express = require("express");
+const { trusted } = require("mongoose");
 const router = express.Router();
 const form = require("../model/formModel");
+const { route } = require("./userRoute");
 
 router.post("/saveform", async (req, res) => {
     try {
@@ -66,7 +68,7 @@ router.get('/getallform',async(req,res)=>{
     }
 });
 
-router.put('/updateform',async(req,res)=>{
+router.put('/varifyform',async(req,res)=>{
     try{
         formId = req.query.formId;
         isVerified = req.query.isVerified;
@@ -105,5 +107,18 @@ router.put('/updateform',async(req,res)=>{
 
 });
 
+router.delete('/deleteForm',async(req,res)=>{
+    try{
+        formId = req.query.formId;
+        if(!formId){
+            return status(200).json({status: false, msg: "send proper data"});
+        }
+        await form.deleteOne({'_id':formId});
+        return res.status(200).send({status:true,msg : 'Form Delted Success'});
+    }catch(error){
+        console.log(error)
+        res.status(200).json({status:false , msg : "Server Error"});
+    }
+});
 
 module.exports = router;

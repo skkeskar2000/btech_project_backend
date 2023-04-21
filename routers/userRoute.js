@@ -2,26 +2,27 @@ const express = require("express");
 const router = express.Router();
 const user = require("../model/userModel");
 
-router.post("/register",async(req,res)=>{
+router.post("/register", async (req, res) => {
     try {
-        
-        const {email, password, name, role} = req.body;
 
-        if(!email || !password || !name || !role){
-            return res.status(400).json({errorMessage : "Plese enter all required field"});
+        const { email, password, name, role } = req.body;
+        console.log(req.body);
+
+        if (!email || !password || !name || !role) {
+            return res.status(400).json({ errorMessage: "Plese enter all required field" });
         }
 
-        if(password.length < 5){
-            return res.status(400).json({errorMessage: "Plese enter password more the 6 character"});
+        if (password.length < 5) {
+            return res.status(400).json({ errorMessage: "Plese enter password more the 6 character" });
         }
 
         // if(role != "employee" || role != "ceo" || role != "manager"){
         //     return res.status(400).json({message: "check you role"});
         // }
-        const existingUser = await user.findOne({email: email});
+        const existingUser = await user.findOne({ email: email });
 
-        if(existingUser){
-            return res.status(400).json({message : "With this user all ready exist"});
+        if (existingUser) {
+            return res.status(400).json({ message: "With this user all ready exist" });
         }
 
         const newUser = new user({
@@ -32,7 +33,7 @@ router.post("/register",async(req,res)=>{
         })
 
         const saveUser = await newUser.save();
-        return res.status(200).json({message: "Saved user"});
+        return res.status(200).json({ message: "Saved user" });
 
 
     } catch (error) {
@@ -41,54 +42,85 @@ router.post("/register",async(req,res)=>{
 });
 
 
-router.get("/login",async(req,res)=>{
-    try{
-        
+router.get("/login", async (req, res) => {
+    try {
+
         email = req.query.email;
         password = req.query.password;
-
-        if(!email || !password){
-            return res.status(400).json({messsage : "Please Enter all fileds"});
+        console.log(email);
+        console.log(password);
+        if (!email || !password) {
+            return res.status(400).json({ messsage: "Please Enter all fileds" });
         }
 
-        const findUser = await user.findOne({email : email});
+        const findUser = await user.findOne({ email: email });
         // console.log(findUser);
-        if(!findUser){
-            return res.status(400).json({msg : "Wrong password or email"});
+        if (!findUser) {
+            return res.status(400).json({ msg: "Wrong password or email" });
         }
 
-        if(findUser.password !== password){
-            return res.status(400).json({msg : "Wrong password or email"});
+        if (findUser.password !== password) {
+            return res.status(400).json({ msg: "Wrong password or email" });
         }
 
-        if(findUser.password === password){
+        if (findUser.password === password) {
             return res.status(200).json(findUser);
         }
 
-    }catch(error){
-        console.log(error);
-    }
-});
-
-
-router.get("/selecteduser",async(req,res)=>{
-    try {
-        var role = req.query.role;
-
-        if(!role){
-            return res.status(200).json({status:false,msg : "Please Enter all fileds"});
-        }
-
-        const findUsers = await user.find({role : role});
-
-        if(!findUsers){
-            return res.status(200).json({status:false,msg: "There is no user"});
-        }
-
-        return res.status(200).send({status: true,data:findUsers})
     } catch (error) {
         console.log(error);
     }
 });
+
+
+router.get("/selecteduser", async (req, res) => {
+    try {
+        var role = req.query.role;
+
+        if (!role) {
+            return res.status(200).json({ status: false, msg: "Please Enter all fileds" });
+        }
+
+        const findUsers = await user.find({ role: role });
+
+        if (!findUsers) {
+            return res.status(200).json({ status: false, msg: "There is no user" });
+        }
+
+        return res.status(200).send({ status: true, data: findUsers })
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.get("/getAllUsers", async (req, res) => {
+    try {
+        const allUsers = await user.find({})
+        if (!allUsers) {
+            return res.status(404);
+        }
+        return res.status(200).send(allUsers);
+    } catch (error) {
+        return res.status(404);
+
+    }
+})
+
+
+router.delete('/removeUser', async (req, res) => {
+
+    try {
+        const id = req.query.userId;
+        if (!id) {
+            return res.status(404).send('please send proper data');
+        }
+        await user.deleteOne({ '_id': id });
+        return res.status(200).send('delete success');
+    } catch (error) {
+        return res.status(404);
+
+    }
+
+})
 
 module.exports = router;
